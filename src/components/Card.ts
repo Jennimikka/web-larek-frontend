@@ -1,10 +1,8 @@
-import { Component } from "../base/Component";
-import { IProductItem } from "../../types";
-import { ensureElement } from "../../utils/utils";
+import { Component } from "./base/Component";
+import { IProductItem } from "../types";
+import { ensureElement } from "../utils/utils";
 
-interface ICardActions {
-    onClick: (event: MouseEvent) => void;
-}
+import { ICardActions } from "../types";
 
 export type ICard = IProductItem & {
     id?: string,

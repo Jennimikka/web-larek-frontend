@@ -29,3 +29,12 @@ basket: string[];
 order: IOrder | null;    
 
 }
+
+export interface ICardActions {
+    onClick: (event: MouseEvent) => void;
+}
+
+export interface IBasketCard {
+    title: string;
+    price: number;   
+}

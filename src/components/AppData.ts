@@ -1,6 +1,6 @@
-import {Model} from "../base/Model";
-import { IProductItem, IAppStateModel, IOrder, FormErrors, PaymentMethod} from "../../types";
-import { IEvents } from "../base/events";
+import {Model} from "./base/Model";
+import { IProductItem, IAppStateModel, IOrder, FormErrors, PaymentMethod} from "../types";
+import { IEvents } from "./base/events";
 export class WebProduct extends Model<IProductItem> {
     id: string;
     description: string;
