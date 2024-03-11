@@ -7,5 +7,19 @@ export class OrderAdress extends Form<IOrderAdress> {
     constructor(container: HTMLFormElement, events: IEvents) {
         super(container, events);
         this._buttons = Array.from (container.querySelectorAll('.button_alt'));
+
+        
     }
-}
+  
+    SetButtonClass(name: string): void { 
+        this._buttons.forEach((button) => { 
+      this.toggleClass(button, "button_alt-active",button.name===name); 
+        }); 
+       }
+  
+    set address(value: string) {
+      (this.container.elements.namedItem('address') as HTMLInputElement).value = value;
+    }
+  
+  }
+    
