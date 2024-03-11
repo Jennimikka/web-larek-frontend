@@ -1,3 +1,4 @@
+
 export interface IProductItem {
     
     id: string,
@@ -37,4 +38,15 @@ export interface ICardActions {
 export interface IBasketCard {
     title: string;
     price: number;   
+}
+
+export interface IOrderAdress {
+    payment:PaymentMethod;
+    adress: string;
+
+}
+
+export interface IContactsOrder {
+    email: string;
+    phone: string;
 }
