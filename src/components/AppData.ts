@@ -1,5 +1,5 @@
 import {Model} from "./base/Model";
-import { IProductItem, IAppStateModel, IOrder, FormErrors, PaymentMethod} from "../types";
+import { IProductItem, IAppStateModel, IOrder, FormErrors, PaymentMethod, IContactsOrder} from "../types";
 import { IEvents } from "./base/events";
 export class WebProduct extends Model<IProductItem> {
     id: string;
@@ -11,6 +11,11 @@ export class WebProduct extends Model<IProductItem> {
 
 
 }
+
+export type CatalogChangeEvent = {
+    catalog: WebProduct[]
+};
+
 export class AppStateModel extends Model<IAppStateModel> {   
         catalog: IProductItem[] = [];
         basket: IProductItem[] = []; 
@@ -115,7 +120,13 @@ export class AppStateModel extends Model<IAppStateModel> {
             this.events.emit('formErrors:change', this.formErrors);
             return Object.keys(errors).length === 0;
         }
+
+        setContactField(field: keyof IContactsOrder, value: string) {
+            this.order[field] = value;
+        
+            if (this.validateOrderForm()) {
+                this.events.emit('order:ready', this.order);
+            } 
     }
     
-      
-
+}
