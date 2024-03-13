@@ -16,13 +16,13 @@ interface IPage { counter: number | null;
     constructor(container: HTMLElement, protected events: IEvents) {
         super(container);
 
-        this._counter = ensureElement<HTMLElement>('.header__basket-counter');
-        this._catalog = ensureElement<HTMLElement>('.gallery');
-        this._wrapper = ensureElement<HTMLElement>('.page__wrapper');
-        this._basket = ensureElement<HTMLElement>('.header__basket');
+        this._counter = ensureElement<HTMLElement>('.header__basket-counter', container);
+        this._catalog = ensureElement<HTMLElement>('.gallery', container);
+        this._wrapper = ensureElement<HTMLElement>('.page__wrapper', container);
+        this._basket = ensureElement<HTMLElement>('.header__basket', container);
 
         this._basket.addEventListener('click', () => {
-            this.events.emit('basket:open');
+            this.events.emit('basket:open', container);
         });
     }
 

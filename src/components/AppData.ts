@@ -27,10 +27,11 @@ export class AppStateModel extends Model<IAppStateModel> {
             address: '',
             total: 0
         }
+        preview: string | null;
         formErrors: FormErrors = {};  
         throwInBasket(item: IProductItem): void {
             this.basket.push(item);
-            this.emitChanges('itemsBasket: changet');
+            this.emitChanges('itemsBasket:changed');
             }
 
         deleteFromBasket(id: string): void {
@@ -62,7 +63,7 @@ export class AppStateModel extends Model<IAppStateModel> {
 
         setCatalog(items:IProductItem[]){
             this.catalog = items.map(item => new WebProduct(item,this.events));
-            this.emitChanges('items: changed',{catalog: this.catalog});
+            this.emitChanges('items:changed',{catalog: this.catalog});
         }
         
         fullBasket():IProductItem[] {
@@ -72,6 +73,11 @@ export class AppStateModel extends Model<IAppStateModel> {
         checkBasket(item:IProductItem){
             return this.basket.includes(item)
         }
+
+         setPreview(item: WebProduct) {
+            this.preview = item.id;
+            this.emitChanges('preview:changed', item);
+         }
 
         setOrder():void {
             this.order.total = this.getTotal();

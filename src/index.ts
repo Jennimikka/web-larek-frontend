@@ -8,10 +8,12 @@ import {Card} from "./components/Card";
 import {cloneTemplate, createElement, ensureElement} from "./utils/utils";
 import {Modal} from "./components/common/Modal";
 import {Basket} from "./components/common/Basket";
+import { BasketCard } from './components/common/BasketCard';
 import {IProductItem, IOrder, IContactsOrder} from "./types";
 import {ContactsOrder} from "./components/ContactsOrder";
 import {OrderAdress} from "./components/Order";
 import {Success} from "./components/common/Success";
+import { container } from 'webpack';
 
 const events = new EventEmitter();
 const api = new LarekApi(CDN_URL, API_URL);
@@ -47,7 +49,7 @@ const contacts = new ContactsOrder(cloneTemplate(contactsTemplate), events);
 // });
 
 
-
+// Изменились элементы каталога
 events.on<CatalogChangeEvent>('items:changed', () => {
     page.catalog = appData.catalog.map(item => {
         const card = new Card('card',cloneTemplate(cardCatalogTemplate), {
@@ -65,10 +67,6 @@ events.on<CatalogChangeEvent>('items:changed', () => {
     page.counter = appData.fullBasket().length;
 });
 
-
-
-
-
 // Получаем карточки с сервера
 api.getProductList()
 	.then(appData.setCatalog.bind(appData))  
@@ -76,18 +74,113 @@ api.getProductList()
 	console.error(err);
 })
 
-events.on('formErrors:change', (errors: Partial<IContactsOrder>) => {
-    const { email, phone } = errors;
-    order.valid = !email && !phone;
-    order.errors = Object.values({phone, email}).filter(i => !!i).join('; ');
+//выбираем товар
+
+ events.on('card:select', (item: WebProduct) => {
+     appData.setPreview(item);
+ });
+//Открытие модальных окон
+events.on('preview:changed', (item: WebProduct) => {
+   if(item) {
+    const card = new Card('card',cloneTemplate(cardPreviewTemplate), {
+    onClick: () => {
+        if (appData.checkBasket(item)) {
+            events.emit('webproduct:delete', item)
+        } else {
+            events.emit('webproduct:added', item)
+        }
+    }
+            
+});
+        modal.render({
+                content: card.render({
+                title: item.title,
+                image: item.image,
+                category: item.category,
+                description: item.description,
+                price: item.price,
+                button: appData.checkBasket(item) ? 'Убрать' : 'Купить',    
+                   
+                })
+            })
+        } else {
+            modal.close();
+        }
+
+    });
+
+
+// Добавление товара в корзину
+events.on('webproduct:added', (item: WebProduct) => {
+appData.throwInBasket(item);
+modal.close();
 });
 
+//Удаление товара из корзины
+events.on('webproduct:delete', (item: WebProduct) => {
+appData.deleteFromBasket(item.id);
+modal.close();
+});
 
+events.on('itemsBasket:changed',(item: BasketCard) => {
+    page.counter = appData.fullBasket.length;
+    const card = new BasketCard(item.index,cloneTemplate(cardBasketTemplate), {
+        onClick: () => events.emit('card:basket', item)
+        });
+    return card.render({
+        title: item.title,
+        price: item.price,
+        
+    });
+   
+       
+    })
+    
+      
+    
+
+// set items(items: HTMLElement[]) {
+//     if (items.length) {
+//         this._list.replaceChildren(...items);
+//         this.setDisabled(this._button, true);
+//      }else {
+//         this._list.replaceChildren(createElement<HTMLParagraphElement>('p', {
+//             textContent: 'Корзина пуста'
+//         }));
+//         this.setDisabled(this._button, false);
+//     }
+  
+// }
+
+// Отправлена форма заказа садресом 
+events.on('order.address:change', (data: { value: string }) => { appData.checkAdress(data.value);
+ });
+
+ // Отправлена форма с полями телефон и e-mail
 events.on( /^contacts\..*:change/,
  (data: { field: keyof IContactsOrder; value: string }) => { 
     appData.setContactField(data.field, data.value);
  });
+// Изменилось состояние валидации формы
+// events.on('formErrors:change', (errors: Partial<IContactsOrder>) => {
+//     const { email, phone } = errors;
+//     order.valid = !email && !phone;
+//     order.errors = Object.values({phone, email}).filter(i => !!i).join('; ');
+// });
 
- events.on('order.address:change', (data: { value: string }) => { appData.checkAdress(data.value);
- });
+// Блокируем прокрутку страницы если открыта модалка
+events.on('modal:open', () => {
+    page.locked = true;
+});
+
+// Разблокируем прокрутку модалки
+events.on('modal:close', () => {
+    page.locked = false;
+});
+
+
+
+
+
+ 
 
