@@ -1,5 +1,5 @@
 import {Model} from "./base/Model";
-import { IProductItem, IAppStateModel, IOrder, FormErrors, PaymentMethod, IContactsOrder} from "../types";
+import { IProductItem, IAppStateModel, IOrder, FormErrors, PaymentMethod, IContactsOrder, IOrderAddress} from "../types";
 import { IEvents } from "./base/events";
 export class WebProduct extends Model<IProductItem> {
     id: string;
@@ -28,14 +28,17 @@ export class AppStateModel extends Model<IAppStateModel> {
             total: 0
         }
         preview: string | null;
+
         formErrors: FormErrors = {};  
-        throwInBasket(item: IProductItem): void {
+        
+        putInBasket(item: IProductItem): void {
             this.basket.push(item);
             this.emitChanges('itemsBasket:changed');
             }
 
         deleteFromBasket(id: string): void {
             this.basket = this.basket.filter((item) => item.id !== id);
+            this.emitChanges('itemsBasket:changed');
         }
 
         defaultOrder(){
@@ -74,7 +77,7 @@ export class AppStateModel extends Model<IAppStateModel> {
             return this.basket.includes(item)
         }
 
-         setPreview(item: WebProduct) {
+        setPreview(item: WebProduct) {
             this.preview = item.id;
             this.emitChanges('preview:changed', item);
          }
@@ -87,18 +90,22 @@ export class AppStateModel extends Model<IAppStateModel> {
 
         checkPayment(orderPayment: PaymentMethod):void {
             this.order.payment = orderPayment;
+            this.validateOrderPayment();
         }
 
-        checkAdress(orderAdress: string): void {
-            this.order.address = orderAdress;
+        checkAddress(orderAddress: string): void {
+            this.order.address = orderAddress;
+            this.validateOrderPayment();
         }
 
         checkEmail(orderEmail: string): void {
             this.order.email = orderEmail;
+            this.validateOrderForm();
         }
 
         checkPhone(orderPhone: string): void {
             this.order.phone = orderPhone;
+            this.validateOrderForm();
         }
 
         validateOrderPayment() {
@@ -127,12 +134,10 @@ export class AppStateModel extends Model<IAppStateModel> {
             return Object.keys(errors).length === 0;
         }
 
-        setContactField(field: keyof IContactsOrder, value: string) {
-            this.order[field] = value;
-        
-            if (this.validateOrderForm()) {
-                this.events.emit('order:ready', this.order);
+        setContactField(field: keyof IContactsOrder, value: string): void {
+            this.order[field] = value;        
+            this.validateOrderForm();
             } 
     }
     
-}
+

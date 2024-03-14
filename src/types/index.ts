@@ -40,9 +40,9 @@ export interface IBasketCard {
     price: number;   
 }
 
-export interface IOrderAdress {
+export interface IOrderAddress {
     payment:PaymentMethod;
-    adress: string;
+    address: string;
 
 }
 

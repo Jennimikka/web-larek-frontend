@@ -32,12 +32,12 @@ this.items = [];
     set items(items: HTMLElement[]) {
         if (items.length) {
             this._list.replaceChildren(...items);
-            this.setDisabled(this._button, true);
+            this.setDisabled(this._button, false);
          }else {
             this._list.replaceChildren(createElement<HTMLParagraphElement>('p', {
                 textContent: 'Корзина пуста'
             }));
-            this.setDisabled(this._button, false);
+            this.setDisabled(this._button, true);
         }
       
     }
@@ -45,6 +45,6 @@ this.items = [];
       
 
     set total(total: number) {
-        this.setText(this._button, total +  'синапсов');
+        this.setText(this._total, total +  'синапсов');
     }
 }
