@@ -177,10 +177,11 @@ events.on('payment:changed', (data: { target: PaymentMethod }) => {
 });
 
 // Изменилось состояние валидации формы с адресом
-events.on('paymentErrors:change', (errors: Partial<IOrderAddress>) => {
+events.on('formAddresErrors:change', (errors: Partial<IOrderAddress>) => {
 	const { payment, address } = errors;
 	order.valid = !payment && !address;
 	order.errors = Object.values({ payment, address }).filter((i) => !!i).join('; ');
+    
 });
 
 
@@ -188,12 +189,13 @@ events.on('paymentErrors:change', (errors: Partial<IOrderAddress>) => {
 events.on( /^contacts\..*:change/,
  (data: { field: keyof IContactsOrder; value: string }) => { 
     appData.setContactField(data.field, data.value);
+    
  });
 // Изменилось состояние валидации формы kонтактов
- events.on('formErrors:change', (errors: Partial<IContactsOrder>) => {
+ events.on('formContactErrors:change', (errors: Partial<IContactsOrder>) => {
      const { email, phone } = errors;
      contacts.valid = !email && !phone;
-     contacts.errors = Object.values({phone, email}).filter(i => !!i).join('; ');
+     contacts.errors = Object.values({phone, email}).filter((i) => !!i).join('; ');
  });
 
  // Изменился адрес доставки
@@ -215,6 +217,7 @@ events.on('contacts:submit', () => {
 					}
 			}, appData.order.total);
 			modal.render({content: success.render({})});
+            appData.clearBasket();
 		})
 		.catch((err) => {
 			console.error(err);

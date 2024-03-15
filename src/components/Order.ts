@@ -30,8 +30,8 @@ export class OrderAddress extends Form<IOrderAddress> {
       }); 
     }
   
-    set address(value: string) {
-      (this.container.elements.namedItem('address') as HTMLInputElement).value = value;
+    set address(address: string) {
+      (this.container.elements.namedItem('address') as HTMLInputElement).value = address;
     }
   
   }

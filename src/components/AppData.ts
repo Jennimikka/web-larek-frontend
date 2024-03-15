@@ -109,20 +109,20 @@ export class AppStateModel extends Model<IAppStateModel> {
         }
 
         validateOrderPayment() {
-            const errors: typeof this.formErrors = {};
-            if (!this.order.payment) {
-                errors.payment = 'Необходимо способ оплаты';
+            const errors: FormErrors = {};
+            if (this.order.payment === null) {
+                errors.payment = 'Необходимо указать способ оплаты';
             }
             if (!this.order.address) {
                 errors.address = 'Необходимо указать адрес';
             }
             this.formErrors = errors;
-            this.events.emit('paymentErrors:change', this.formErrors);
+            this.events.emit('formAddresErrors:change', this.formErrors);
             return Object.keys(errors).length === 0;
         }
 
         validateOrderForm() {
-            const errors: typeof this.formErrors = {};
+            const errors: FormErrors = {};
             if (!this.order.email) {
                 errors.email = 'Необходимо указать email';
             }
@@ -130,7 +130,7 @@ export class AppStateModel extends Model<IAppStateModel> {
                 errors.phone = 'Необходимо указать телефон';
             }
             this.formErrors = errors;
-            this.events.emit('formErrors:change', this.formErrors);
+            this.events.emit('formContactErrors:change', this.formErrors);
             return Object.keys(errors).length === 0;
         }
 
@@ -138,6 +138,7 @@ export class AppStateModel extends Model<IAppStateModel> {
             this.order[field] = value;        
             this.validateOrderForm();
             } 
+        
     }
     
 
