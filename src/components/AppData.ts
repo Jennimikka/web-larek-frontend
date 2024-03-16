@@ -23,7 +23,7 @@ export class AppStateModel extends Model<IAppStateModel> {
             email: '',
             phone: '',
             items: [],
-            payment: 'card',
+            payment: null,
             address: '',
             total: 0
         }
@@ -46,7 +46,7 @@ export class AppStateModel extends Model<IAppStateModel> {
             email: '',
             phone: '',
             items: [],
-            payment: 'card',
+            payment: null,
             address: '',
             total: 0
         } 
@@ -110,7 +110,7 @@ export class AppStateModel extends Model<IAppStateModel> {
 
         validateOrderPayment() {
             const errors: FormErrors = {};
-            if (this.order.payment === null) {
+            if (!this.order.payment) {
                 errors.payment = 'Необходимо указать способ оплаты';
             }
             if (!this.order.address) {
@@ -122,6 +122,7 @@ export class AppStateModel extends Model<IAppStateModel> {
         }
 
         validateOrderForm() {
+            console.log(this.order)
             const errors: FormErrors = {};
             if (!this.order.email) {
                 errors.email = 'Необходимо указать email';

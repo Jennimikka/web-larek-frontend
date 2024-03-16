@@ -55,14 +55,12 @@ export class Card extends Component<ICard> {
     }
 
     set price(value: number) {
-        if (value === null) {
+       
+        if (!value) {
             this.setText(this._price, 'Бесценно');
-            if (this._button) {
-                this._button.setAttribute('disabled', '');
-            } else {
-                this.setText(this._price, value +  'синапсов');
-
-            }
+             if (this._button) {
+                 this._button.setAttribute('disabled', '');
+             } 
         
         }
     }
